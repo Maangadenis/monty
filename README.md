@@ -90,5 +90,5 @@ Maangadenis@ubuntu:~/monty$
 
 ## AUTHOR 
 
-[Denis Maanga](denismaanga99@gmail.com)
-[Francis Wesa](wobulufrancis@gmail.com)
+[Maangadenis](denismaanga99@gmail.com)
+[Wesa5](wobulufrancis@gmail.com)
