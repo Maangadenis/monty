@@ -87,8 +87,7 @@ Maangadenis@ubuntu:~/monty$
 | pchar   | L<line_number>: can't pchar, value out of range. | the integer value is not in the ascii table. | EXIT_FAILURE |
 |         | L<line_number>: can't pchar, stack empty. | stack is empty | EXIT_FAILURE |
 
-
-## AUTHOR 
+## AUTHOR
 
 [Maangadenis](denismaanga99@gmail.com)
 [Wesa5](wobulufrancis@gmail.com)
