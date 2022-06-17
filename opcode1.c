@@ -1,139 +1,138 @@
 #include "monty.h"
 /**
- * pint - prints the value at the top of stack
- * @stack: pointer to the head node pointer of stack
- * @nline: the line number
- * Return: Nothing.
+ * push - function for push opcode
+ * @stack: stack memory
+ * @line_number: operand
+ * Return: void
  */
-void pint(stack_t **stack, unsigned int nline)
+void push(stack_t **stack, unsigned int line_number)
 {
-	stack_t *temp;
+	stack_t *new_stack = allocate(sizeof(stack_t));
 
-	if (stack == NULL || *stack == NULL)
-	{
-		fprintf(stderr, "L%d: can't pint, stack empty\n", nline);
-		exit(EXIT_FAILURE);
-	}
+	new_stack->prev = NULL;
+	new_stack->next = NULL;
+	new_stack->n = line_number;
 
-	temp = *stack;
-	while (temp)
+	if ((*stack) == NULL)
 	{
-		if (temp->prev == NULL)
-			break;
-		temp = temp->prev;
-	}
-
-	printf("%d\n", temp->n);
-}
-
-/**
- * pop - removes the top element of stack
- * @stack: pointer to the head node pointer of stack
- * @nline: the line number
- * Return: Nothing.
- */
-void pop(stack_t **stack, unsigned int nline)
-{
-	if (stack == NULL || *stack == NULL)
-	{
-		fprintf(stderr, "L%d: can't pop an empty stack\n", nline);
-		exit(EXIT_FAILURE);
-	}
-	/* if stack is more than 1 node, else free entire thing */
-	if ((*stack)->next != NULL)
-	{
-		*stack = (*stack)->next;
-		free((*stack)->prev);
-		(*stack)->prev = NULL;
+		(*stack) = new_stack;
 	}
 	else
 	{
-		free(*stack);
-		*stack = NULL;
+		new_stack->next = (*stack);
+		(*stack) = new_stack;
 	}
 }
 
 /**
- * swap - swaps the top two elements of the stack
- * @stack: pointer to the head node pointer of stack
- * @nline: the line number
- * Return: Nothing.
+ * pall - function for pall opcode
+ * @stack: stack memory
+ * @line_number: operand
+ * Return: void
  */
-void swap(stack_t **stack, unsigned int nline)
+
+void pall(stack_t **stack,
+	unsigned int __attribute__((__unused__)) line_number)
 {
-	int temp;
 
-	if (stack == NULL || *stack == NULL || !((*stack)->next))
+	/**
+	 * __attribute__ - unused attribute
+	 */
+	stack_t *tmp;
+
+	if ((*stack) == NULL)
 	{
-		fprintf(stderr, "L%d: can't swap, stack too short\n", nline);
-		exit(EXIT_FAILURE);
+		return;
 	}
-
-	temp = (*stack)->n;
-	(*stack)->n = (*stack)->next->n;
-	(*stack)->next->n = temp;
+	else
+	{
+		tmp = *stack;
+		while (tmp)
+		{
+			printf("%d\n", tmp->n);
+			tmp = tmp->next;
+		}
+	}
 }
 
 /**
- * pchar - prints char at top of stack
- * @stack: pointer to the head node pointer of stack
- * @nline: the line number
- * Return: Nothing.
+ * pint - function for push opcode
+ * @stack: stack memory
+ * @line_number: operand
+ * Return: void
  */
-void pchar(stack_t **stack, unsigned int nline)
+void pint(stack_t **stack,
+		unsigned int __attribute__((__unused__)) line_number)
 {
-	char c;
-	stack_t *temp;
-
-	if (stack == NULL || *stack == NULL)
+	if ((*stack) == NULL)
 	{
-		fprintf(stderr, "L%d: can't pchar, stack empty\n", nline);
-		exit(EXIT_FAILURE);
+		return;
 	}
-
-	temp = *stack;
-	while (temp)
+	else
 	{
-		if (temp->prev == NULL)
-			break;
-		temp = temp->prev;
+		printf("%d\n", (*stack)->n);
 	}
-
-	c = temp->n;
-	if (_isalpha(temp->n) == 0)
-	{
-		fprintf(stderr, "L%d: can't pchar, value out of range\n", nline);
-		exit(EXIT_FAILURE);
-	}
-	printf("%c\n", c);
 }
-/**
- * pstr - prints a str from ascii starting from the top
- * @stack: pointer to the head node pointer of stack
- * @nline: the line number
- * Return: Nothing.
- */
-void pstr(stack_t **stack, unsigned int nline)
-{
-	int idx = 0;
-	char res[] = "";
-	char c;
-	stack_t *temp;
 
-	temp = *stack;
-	(void)nline;
-	/* starts at the top */
-	while (temp)
+/**
+ * pop - function for push opcode
+ * @stack: stack memory
+ * @line_number: operand
+ * Return: void
+ */
+void pop(stack_t **stack, unsigned int line_number)
+{
+	stack_t *tmp;
+	char *msg = allocate(300);
+
+	if ((*stack) == NULL)
 	{
-		if (temp->n == 0)
-			break;
-		if (_isalpha(temp->n) == 0)
-			break;
-		c = temp->n;
-		printf("%c", c);
-		res[idx] += c;
-		temp = temp->next;
-		idx++;
+		sprintf(msg, "L%d: can't pop an empty stack\n", line_number);
+		print_err(msg);
+		return;
 	}
-	printf("\n");
+	else
+	{
+		tmp = *stack;
+		*stack = (*stack)->next;
+		if(*stack)
+		(*stack)->prev = NULL;
+		free(tmp);
+	}
+	free(msg);
+}
+
+/**
+ * swap - function for push opcode
+ * @stack: stack memory
+ * @line_number: operand
+ * Return: void
+ */
+void swap(stack_t **stack, unsigned int line_number)
+{
+	stack_t *tmp;
+	char *msg = allocate(300);
+
+	if ((*stack) == NULL )
+	{
+		sprintf(msg, "L%d: can't swap, stack too short\n", line_number);
+		print_err(msg);
+		return;
+	}
+	else if ((*stack)->next == NULL )
+	{
+		sprintf(msg, "L%d: can't swap, stack too short\n", line_number);
+		print_err(msg);
+		return;
+	}
+	else
+	{
+		tmp = (*stack)->next;
+		(*stack)->next = tmp->next;
+		(*stack)->prev = tmp->prev;
+		tmp->prev = NULL;
+		tmp->next = *stack;
+		(*stack) = tmp;
+	}
+	free(msg);
 }
